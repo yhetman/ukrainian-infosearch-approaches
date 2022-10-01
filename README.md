@@ -58,7 +58,7 @@ Some of the most popular works of Ukrainian literature were used as raw data.
 
 ## Stages of processing
 
-1. Preprocessing
+1. Retrieving data
 - [ ] retrieve raw text from the books in different formats;
 - [ ] cut texts into sentences;
 - [ ] delete numbers and dates;
@@ -66,11 +66,22 @@ Some of the most popular works of Ukrainian literature were used as raw data.
 - [ ] filter the list;
 - [ ] split sentences into words dealing correctly with apostrophes;
 - [ ] lowercase all the words;
+- [ ] create corpus;
 
-2. Exploratory Data Analysis
+2. Preprocessing
+- [ ] lematization;
+- [ ] stemming;
+- [ ] create corpus;
+- [ ] create a vocabulary of stop-words;
+- [ ] TF-IDF counting;
+- [ ] Word2Vec;
+- [ ] GloVe;
+
+3. Exploratory Data Analysis
 - [ ] words maps;
 - [ ] check lenghts and frequencies;
 - [ ] find most used words;
-- [ ] create a list of stop-words;
 
-3. Create a voiced dataset of most used words
+4. Create a voiced dataset of most used words
+
+5. Create GAN model to generate text (optional)
