@@ -37,6 +37,7 @@ def delete_sings_digits(content):
     filtered_words = [i for i in content.split(" ") if i != '']
     return content
 
+
 def create_corpus(content, pronouns, particula):
     with open('Capitalized.txt', 'r') as file:
         capitalized = file.read().split('\n')
@@ -66,7 +67,7 @@ def get_book_corpus(name):
 
     
 if __name__ == "__main__":
-#     name = '../books/Intermezzo.txt'
+    
     books = ['../books/Intermezzo.txt',
              '../books/Климко.txt',
              '../books/Місто.txt',
@@ -85,6 +86,7 @@ if __name__ == "__main__":
              '../books/Камінний_хрест.txt',
              '../books/Мина_Мазайло.txt',
              '../books/Я_романтика.txt']
+    
     vocabulary = list()
     for i in books:
         vocabulary += get_book_corpus(i)
