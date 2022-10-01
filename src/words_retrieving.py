@@ -28,7 +28,7 @@ def delete_parenthesis(content):
 
 
 def delete_sings_digits(content):
-    punc = '''!()-[]{};:"\,<>./?@#$%^&*_~'''
+    punc = '''!()-[]{};:"\,«»<>./?@#$%—…^&*_~'''
     for ele in content:
         if ele in punc:
             content = content.replace(ele, "")
