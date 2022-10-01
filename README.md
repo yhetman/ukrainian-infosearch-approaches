@@ -54,3 +54,23 @@ Some of the most popular works of Ukrainian literature were used as raw data.
 |Кайдашева сім‘я| doc |
 |Мартин Боруля| doc |
 |Гімн демократичної молоді||
+
+
+## Stages of processing
+
+1. Preprocessing
+- [ ] retrieve raw text from the books in different formats;
+- [ ] cut texts into sentences;
+- [ ] delete numbers and dates;
+- [ ] get list of all words starting with capital letter;
+- [ ] filter the list;
+- [ ] split sentences into words dealing correctly with apostrophes;
+- [ ] lowercase all the words;
+
+2. Exploratory Data Analysis
+- [ ] words maps;
+- [ ] check lenghts and frequencies;
+- [ ] find most used words;
+- [ ] create a list of stop-words;
+
+3. Create a voiced dataset of most used words
