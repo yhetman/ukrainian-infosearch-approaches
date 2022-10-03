@@ -3,12 +3,10 @@ Dataset of Ukrainian literary words
 
 
 ## Description
-
 In this repository, I started a huge process of processing the Ukrainian literary language in order to simplify its use in further projects that may include the Ukrainian language.
 Some of the most popular works of Ukrainian literature were used as raw data.
 
 ## Books to be processed
-
 - [ ] Кобзар
 - [ ] Лісова пісня
 - [ ] Ворошиловград
@@ -59,7 +57,6 @@ Some of the most popular works of Ukrainian literature were used as raw data.
 ## Stages of processing
 
 1. Retrieving data
-
 - [ ] retrieve raw text from the books in different formats;
 - [ ] cut texts into sentences;
 - [ ] delete numbers and dates;
@@ -70,7 +67,6 @@ Some of the most popular works of Ukrainian literature were used as raw data.
 - [ ] create corpus;
 
 2. Preprocessing
-
 - [ ] lematization;
 - [ ] stemming;
 - [ ] create corpus;
@@ -80,7 +76,6 @@ Some of the most popular works of Ukrainian literature were used as raw data.
 - [ ] GloVe;
 
 3. Exploratory Data Analysis
-
 - [ ] words maps;
 - [ ] check lenghts and frequencies;
 - [ ] find most used words;
