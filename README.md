@@ -28,6 +28,7 @@ Some of the most popular works of Ukrainian literature were used as raw data.
 - [ ] Мартин Боруля
 - [ ] Гімн демократичної молоді
 
+
 | Book | Format |
 | ---- | ------ |
 |Кобзар| txt |
