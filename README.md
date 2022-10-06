@@ -55,7 +55,6 @@ Some of the most popular works of Ukrainian literature were used as raw data.
 
 
 ## Stages of processing
-
 1. Retrieving data
 - [ ] retrieve raw text from the books in different formats;
 - [ ] cut texts into sentences;
