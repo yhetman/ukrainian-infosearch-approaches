@@ -1,8 +1,6 @@
 import re
 from string import digits
 
-
-
 def check_capitalized_words(content, pronouns, particula):
     cyrillic_letters = r'\b[А-Я]\w*'
     latin_letters = r'\b[A-Z]\w*'
