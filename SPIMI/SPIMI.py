@@ -147,6 +147,7 @@ class SPIMI(object):
         print(f'Indexing Completed! Find index file at {output_file} => Time Taken: {index_end_time - index_start_time:.3f} sec')
         
 
+
 parser = argparse.ArgumentParser(description='Single-Pass In-Memory Indexing')
 parser.add_argument('--path', default='../books/')
 parser.add_argument('--block_size', type=int, default=10000000)
