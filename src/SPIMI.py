@@ -18,20 +18,18 @@ class SPIMI(object):
 
 
     def directory_listing(self, root):
-        files_in_dir = os.listdir(root)
-        files_in_dir = [os.path.abspath(os.path.join(root, file)) for file in files_in_dir]
+        files_in_dir = [os.path.abspath(os.path.join(root, file)) for file in os.listdir(root)]
         self.docs = dict(zip(files_in_dir, list(range(len(files_in_dir)))))
         return files_in_dir
 
-    
-    
+
     def file_reading(self, filename):
         with open(filename, 'r', encoding='utf-8') as f:
             file_content = f.read()
         return file_content
 
 
-    def isUkrainian(self, token):
+    def is_ukrainian(self, token):
         ukrainian = [96, 1072, 1073, 1074, 1075, 1076, 1077, 1078, 1079, 1080, 1081, 1082, 1083, 1084, 1085, 1086, 1087, 1088, 1089, 1090, 1091, 1092, 1093, 1094, 1095, 1096, 1097, 1100, 1102, 1103, 1108, 1110, 1111, 1169, 8217]
         for char in token:
             if ord(char) not in ukrainian:
@@ -40,28 +38,20 @@ class SPIMI(object):
 
     
     def tokenizer(self, file_content):
-        tokens = list()
-        for token in file_content.lower().split():
-            if token != '' and self.isUkrainian(token) == True:
-                tokens.append(token)
-        return list(set(tokens))
+        return list(set([token for token in file_content.split() if token != '' and self.is_ukrainian(token) == True]))
 
     
     def linguistic_transform(self, file_content):
         punc = '''!()-'”№[]{};:"\,“«»<>./?@#$%—…^&*_~|–abcdefghijklmnoqprstuvwxyz'''
         content = "".join([c for c in file_content.lower() if c not in punc])
-        table = str.maketrans('', '', string.digits)
-        content = content.translate(table)
-        return content
+        return content.translate(str.maketrans('', '', string.digits))
  
     def add_to_dictionary(self, dictionary, term):
         dictionary[term] = []
         return dictionary[term]
 
-
     def get_postings_list(self, dictionary, term):
         return dictionary[term]
-
 
     def add_to_postings_list(self, postings_list, doc_id):
         postings_list.append(doc_id)
@@ -98,12 +88,12 @@ class SPIMI(object):
                     self.add_to_postings_list(postings_list, self.docs[doc_id])
         if bool(self.dictionary):
             self.write_block(self.dictionary, block_num)
-            self.block_time(block_num, current_size/512)
+            self.block_time(block_num, current_size / 512)
 
 
     def block_time(self, block_num, block_size):
         end_time = time.time()
-        print(f'Time take for BLOCK {block_num}: {end_time-self.start_time}, BLOCK {block_num} size: {block_size}')
+        print(f'BLOCK{block_num} with size: {round((block_size/ (1024 * 1024)), 1):.2f} MB =>  Time Taken for BLOCK {block_num}: {(end_time - self.start_time):.3f} sec')
         self.start_time = time.time()
 
 
@@ -122,14 +112,12 @@ class SPIMI(object):
         file_lines = [block_file.readline()[:-1] for block_file in opened_block_files]
         prev_term = ''
         first_line = True
-
         with open(output_file, 'w', encoding='utf-8') as f:
             while (len(opened_block_files)) > 0:
                 first_index = file_lines.index(min(file_lines))
                 line = file_lines[first_index]
                 curr_term = line.split()[0]
                 curr_postings = ' '.join(line.split()[1:])
-
                 if curr_term != prev_term:
                     if first_line:
                         f.write(f'{curr_term} {curr_postings}')
@@ -139,31 +127,29 @@ class SPIMI(object):
                     prev_term = curr_term
                 else:
                     f.write(f' {curr_postings}')
-
                 file_lines[first_index] = opened_block_files[first_index].readline()[:-1]
-
                 if file_lines[first_index] == '':
                     opened_block_files[first_index].close()
                     opened_block_files.pop(first_index)
                     file_lines.pop(first_index)
         return True
 
-    def spimi_index(self, root, output_file, block_size=100000):
+    def spimi_index(self, root, output_file, block_size=1000000):
         index_start_time = time.time()
-        print('Starting Invert Function')
+        print('Starting Single-Pass In-Memory Indexing')
         self.spimi_invert(root, block_size)
         merge_start_invert_end_time = time.time()
-        print(f'Invert Complete, Time Taken: {merge_start_invert_end_time - index_start_time}')
+        print(f'Invert Completed => Time Taken: {merge_start_invert_end_time - index_start_time:.3f} sec')
         print(f'Starting Merge of {len(self.block_files)} BLOCK files')
         self.spimi_merge(output_file)
         index_end_time = time.time()
-        print(f'Merge Complete, Time Taken: {index_end_time - merge_start_invert_end_time}')
-        print(f'Indexing Completed, Find index file at {output_file}, Time Taken: {index_end_time - index_start_time}')
+        print(f'Merge Completed => Time Taken: {index_end_time - merge_start_invert_end_time:.3f} sec')
+        print(f'Indexing Completed! Find index file at {output_file} => Time Taken: {index_end_time - index_start_time:.3f} sec')
         
 
 parser = argparse.ArgumentParser(description='Single-Pass In-Memory Indexing')
 parser.add_argument('--path', default='../books/')
-parser.add_argument('--block_size', type=int, default=100000)
+parser.add_argument('--block_size', type=int, default=10000000)
 parser.add_argument('--output', default='output')
 parser.add_argument('--filename', default='index.txt')
 args = parser.parse_args()
