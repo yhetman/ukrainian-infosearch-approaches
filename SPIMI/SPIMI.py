@@ -1,10 +1,7 @@
 import os
-from nltk.stem import PorterStemmer
 import string
-import nltk
 import sys
 import time
-import argparse
 
 
 class SPIMI(object):
@@ -148,13 +145,7 @@ class SPIMI(object):
         
 
 
-parser = argparse.ArgumentParser(description='Single-Pass In-Memory Indexing')
-parser.add_argument('--path', default='../books/')
-parser.add_argument('--block_size', type=int, default=10000000)
-parser.add_argument('--output', default='./BLOCKS')
-parser.add_argument('--filename', default='./INDEX/index.txt')
-args = parser.parse_args()
 
 if __name__ == '__main__':
-    spimi = SPIMI(args.output)
-    spimi.spimi_index(args.path, args.filename, args.block_size)
+    spimi = SPIMI('./BLOCKS')
+    spimi.spimi_index('../books/','./INDEX/index.txt', block_size=10000000)
