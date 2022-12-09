@@ -14,7 +14,7 @@ class SPIMI(object):
             os.mkdir(self.output_dir)
 
 
-    def directory_listing(self, root):
+    def list_directory(self, root):
         files_in_dir = [os.path.abspath(os.path.join(root, file)) for file in os.listdir(root)]
         self.docs = dict(zip(files_in_dir, list(range(len(files_in_dir)))))
         return files_in_dir
@@ -39,7 +39,7 @@ class SPIMI(object):
 
     
     def linguistic_transform(self, file_content):
-        punc = '''!()-'”№[]{};:"\,“«»<>./?@#$%—…^&*_~|–abcdefghijklmnoqprstuvwxyz'''
+        punc = '''!()-'”№[]{};:"\\,“«»<>./?@#$%—…^&*_~|–abcdefghijklmnoqprstuvwxyz'''
         content = "".join([c for c in file_content.lower() if c not in punc])
         return content.translate(str.maketrans('', '', string.digits))
  
@@ -54,7 +54,7 @@ class SPIMI(object):
         postings_list.append(doc_id)
 
     def spimi_invert(self, root, block_size=1000000):
-        files_in_dir = self.directory_listing(root)
+        files_in_dir = self.list_directory(root)
         block_num = 0
         max_byte = block_size * 512
         current_size = 0
@@ -104,6 +104,19 @@ class SPIMI(object):
         return output_block_file
 
 
+    def write_compressed_block(self, dictionary, pointers, posting_list, block_num):
+        terms = [dictionary[pointers[i]:pointers[i+1]-1] for i in range(len(pointers)-1)]
+        sorted_terms = sorted(terms)
+        output_block_file = os.path.join(self.output_dir, f'BLOCK{block_num}.txt')
+        with open(output_block_file, 'w', encoding='utf8') as f:
+            for i in range(len(sorted_terms)):
+                term_index = terms.index(sorted_terms[i])
+                line = f'{sorted_terms[i]} {" ".join([str(doc_id) for doc_id in posting_list[term_index]])}\n'
+                f.write(line)
+        self.block_files.append(output_block_file)
+        return output_block_file
+
+
     def spimi_merge(self, output_file):
         opened_block_files = [open(block_file, encoding='utf-8') for block_file in self.block_files]
         file_lines = [block_file.readline()[:-1] for block_file in opened_block_files]
@@ -131,6 +144,53 @@ class SPIMI(object):
                     file_lines.pop(first_index)
         return True
 
+
+
+    def spimi_compress_dictionary(self, root, block_size=100000):
+        files_in_dir = self.list_directory(root)
+        block_num = 0
+        max_byte = block_size * 512
+        current_size = 0
+        self.start_time = time.time()
+        self.dictionary = '|'
+        self.pointers = []
+        self.posting_lists = []
+        for doc_id in (files_in_dir):
+            file_content = self.file_reading(doc_id)
+            tokens = self.tokenizer(self.linguistic_transform(file_content))
+            for token in tokens:
+                if f'|{token}|' not in self.dictionary:
+                    current_size += sys.getsizeof(token)
+                    self.pointers.append(len(self.dictionary))
+                    self.dictionary += f'{token}|'
+                    self.posting_lists.append([])
+                    postings_list = self.posting_lists[-1]
+                else:
+                    pos_in_dict = self.pointers.index(self.dictionary.index(f'|{token}|')+1)
+                    postings_list = self.posting_lists[pos_in_dict-1]
+                if current_size + sys.getsizeof(doc_id) > max_byte:
+                    self.write_compressed_block(self.dictionary, self.pointers, self.posting_lists, block_num)
+                    self.block_time(block_num, current_size/512)
+                    block_num += 1
+                    self.dictionary = '|'
+                    self.pointers = []
+                    self.posting_lists = []
+                    current_size = 0
+                    current_size += sys.getsizeof(token)
+                    self.pointers.append(len(self.dictionary))
+                    self.dictionary += token
+                    self.posting_lists.append([])
+                    postings_list = self.posting_lists[-1]
+                    current_size += sys.getsizeof(doc_id)
+                    postings_list.append(doc_id)
+                else:
+                    current_size += sys.getsizeof(doc_id)
+                    postings_list.append(doc_id)
+        if bool(self.dictionary):
+            self.write_compressed_block(self.dictionary, self.pointers, self.posting_lists, block_num)
+            self.block_time(block_num, current_size / 512)
+
+
     def spimi_index(self, root, output_file, block_size=1000000):
         index_start_time = time.time()
         print('Starting Single-Pass In-Memory Indexing')
@@ -144,8 +204,22 @@ class SPIMI(object):
         print(f'Indexing Completed! Find index file at {output_file} => Time Taken: {index_end_time - index_start_time:.3f} sec')
         
 
+    def spimi_compression_index(self, root, output_file, block_size=1000000):
+        index_start_time = time.time()
+        print('Starting Single-Pass In-Memory Indexing with Compression')
+        self.spimi_compress_dictionary(root, block_size)
+        merge_start_invert_end_time = time.time()
+        print(f'Invert Completed => Time Taken: {merge_start_invert_end_time - index_start_time:.3f} sec')
+        print(f'Starting Merge of {len(self.block_files)} BLOCK files')
+        self.spimi_merge(output_file)
+        index_end_time = time.time()
+        print(f'Merge Completed => Time Taken: {index_end_time - merge_start_invert_end_time:.3f} sec')
+        print(f'Indexing Completed! Find index file at {output_file} => Time Taken: {index_end_time - index_start_time:.3f} sec')
+        
 
 
 if __name__ == '__main__':
+    spimi = SPIMI('./BLOCKS_NOCOMP')
+    spimi.spimi_index('../books/','./INDEX/index_without_compression.txt', block_size=10000000)
     spimi = SPIMI('./BLOCKS')
-    spimi.spimi_index('../books/','./INDEX/index.txt', block_size=10000000)
+    spimi.spimi_compression_index('../books/','./INDEX/index_with_compression.txt', block_size=100000)
