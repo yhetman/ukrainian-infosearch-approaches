@@ -1,9 +1,12 @@
-# ukrainian_words
-Dataset of Ukrainian literary words
+# Informational search methods 
+
+Methods for informational search engines were implemented to process ukrainian documents.
+I decided to use classic ukrainian literature to process.
 
 ## Description
 
-In this repository, I started a huge process of processing the Ukrainian literary language in order to simplify its use in further projects that may include the Ukrainian language.
+Also, in this repository, I will try to simplify processing of Ukrainian literary language in order to use ukrainian corpus and different indexes in further projects that may include the informational search throught ukrainian texts.
+
 Some of the most popular works of Ukrainian writers were used as raw data.
 
 ## Books to be processed
@@ -28,7 +31,7 @@ Some of the most popular works of Ukrainian writers were used as raw data.
 
 ## Stages of processing
 
-1. Retrieving data
+**1. Retrieving data**
 - [x] retrieve raw text from the books in different formats;
 - [x] cut texts into sentences;
 - [x] delete numbers and dates;
@@ -38,7 +41,7 @@ Some of the most popular works of Ukrainian writers were used as raw data.
 - [x] lowercase all the words;
 - [x] create corpus.
 
-2. Preprocessing
+**2. Preprocessing**
 - [x] lematization;
 - [x] stemming;
 - [x] create corpus;
@@ -48,12 +51,12 @@ Some of the most popular works of Ukrainian writers were used as raw data.
 - [ ] Word2Vec;
 - [ ] GloVe.
 
-3. Exploratory Data Analysis
+**3. Exploratory Data Analysis**
 - [ ] words maps;
 - [x] check lenghts and frequencies;
 - [x] find most used words.
 
-4. Implement several informational search approaches
+**4. Implementation of several informational search approaches**
 - [x] Suffix tree;
 - [x] K-gram index;
 - [x] Permuterm index;
