@@ -61,4 +61,10 @@ Some of the most popular works of Ukrainian writers were used as raw data.
 - [x] Two-word indexing;
 - [x] SPIMI.
 
+### Stemmers
 
+| Stemmer Name | Authors | Year | Licence| Link |
+| :---: | :---: | :---: | :---: | :---: |
+| vgrichina | Vladimir Grichina | 2013 | MIT licence | [Python](https://github.com/vgrichina/ukrainian-stemmer) |
+| tochytskyi | Andrii Glybovets, Volodymyr Tochytskyi | 2016 |  | [Python](https://github.com/tochytskyi/ukrstemmer) |
+| tree-stem | Andrii Makukha | 2020 | BSD 2-Clause licence | [Python](https://github.com/amakukha/stemmers_ukrainian/blob/master/src/tree_stem.py) | 
